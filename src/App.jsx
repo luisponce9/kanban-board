@@ -1,22 +1,41 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+
 import FormularioTarea from './components/FormularioTarea';
 import Columna from './components/Columna'
 import { tareasIniciales } from './tareasIniciales'
+
 import { useState } from 'react'
+
 
 function App() {
   const [listaTareas, setListaTareas] = useState(tareasIniciales)
-  const [mostrarForm, setMostrarForm] = useState(false)
+  const [mostrarModal, setMostrarModal] = useState(false)
+  const [tareaAEditar, setTareaAEditar] = useState(null)
 
   const agregarTarea = (nuevaTarea) => {
     setListaTareas([...listaTareas, { id: Date.now(), nombre: nuevaTarea.nombre, descripcion: nuevaTarea.descripcion, estado: "pendiente" }])
-    setMostrarForm(false)
   }
 
   const eliminarTarea = (id) => {
     const nuevaLista = [...listaTareas]
     setListaTareas(nuevaLista.filter((el => el.id !== id)))
+  }
+
+  const editarTarea = (tareaEditada) => {
+    const listaEditada = listaTareas.map((tarea) => {
+      if (tarea.id === tareaEditada.id) {
+        return {
+          ...tarea,
+          nombre: tareaEditada.nombre,
+          descripcion: tareaEditada.descripcion,
+        }
+      }
+      return (tarea)
+    })
+
+    setListaTareas(listaEditada)
   }
 
   const moverTarea = (id, direccion) => {
@@ -46,6 +65,21 @@ function App() {
     setListaTareas(nuevaLista)
   }
 
+  const abrirModalCrear = () => {
+    setTareaAEditar(null)
+    setMostrarModal(true)
+  }
+
+  const abrirModalEditar = (tarea) => {
+    setTareaAEditar(tarea)
+    setMostrarModal(true)
+  }
+
+  const cerrarModal = () => {
+    setMostrarModal(false)
+    setTareaAEditar(null)
+  }
+
   return (
     <main className="min-vh-100 bg-primary">
       <h2 className="p-3 text-white">Kanban Board</h2>
@@ -55,31 +89,53 @@ function App() {
           tipo="Pendiente"
           tareas={listaTareas.filter(el => el.estado === "pendiente")}
           moverTarea={moverTarea}
+          abrirModalEditar={abrirModalEditar}
           eliminarTarea={eliminarTarea} />
 
         <Columna
           tipo="En proceso"
           tareas={listaTareas.filter(el => el.estado === "en_proceso")}
-          moverTarea={moverTarea} 
-          eliminarTarea={eliminarTarea}/>
+          moverTarea={moverTarea}
+          abrirModalEditar={abrirModalEditar}
+          eliminarTarea={eliminarTarea} />
 
         <Columna
           tipo="Completadas"
           tareas={listaTareas.filter(el => el.estado === "completada")}
           moverTarea={moverTarea}
+          abrirModalEditar={abrirModalEditar}
           eliminarTarea={eliminarTarea} />
       </div>
+
+      <Modal
+        show={mostrarModal}
+        onHide={cerrarModal}
+        centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {tareaAEditar ? 'Editar tarea' : 'Nueva tarea'}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <FormularioTarea
+            agregarTarea={agregarTarea}
+            editarTarea={editarTarea}
+            tareaAEditar={tareaAEditar}
+            cerrarModal={cerrarModal} />
+        </Modal.Body>
+      </Modal>
+
 
       <div className="container text-end my-3">
         <Button
           variant="danger"
-          onClassName="mb-3"
-          onClick={() => setMostrarForm(!mostrarForm)}>
-          {mostrarForm ? "Cerrar" : "+ Nueva Tarea"}
+          onClassName="ms-auto"
+          onClick={abrirModalCrear}>
+          + Nueva Tarea
         </Button>
-
-        {mostrarForm && <FormularioTarea agregarTarea={agregarTarea}/>}
       </div>
+
+
     </main>
   )
 }

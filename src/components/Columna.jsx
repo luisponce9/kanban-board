@@ -1,7 +1,7 @@
 import CardTarea from "./CardTarea"
 import Badge from 'react-bootstrap/Badge'
 
-const Columna = ({ tipo, tareas, moverTarea, eliminarTarea }) => {
+const Columna = ({ tipo, tareas, moverTarea, abrirModalEditar, eliminarTarea }) => {
     return (
         <section className="d-flex flex-column card" style={{ width: "480px" }}>
             <div className="d-flex align-items-center">
@@ -27,6 +27,7 @@ const Columna = ({ tipo, tareas, moverTarea, eliminarTarea }) => {
                                 descripcion={tarea.descripcion}
                                 estado={tarea.estado}
                                 moverTarea={moverTarea}
+                                abrirModalEditar = {abrirModalEditar}
                                 eliminarTarea={eliminarTarea}
                             />
                         </li>

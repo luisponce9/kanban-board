@@ -1,7 +1,8 @@
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import Dropdown from 'react-bootstrap/Dropdown'
 
-const CardTarea = ({ id, nombre, descripcion, estado, moverTarea, eliminarTarea }) => {
+const CardTarea = ({ id, nombre, descripcion, estado, moverTarea, abrirModalEditar, eliminarTarea }) => {
     return (
         <Card>
             <Card.Body className="d-flex align-items-center">
@@ -11,13 +12,23 @@ const CardTarea = ({ id, nombre, descripcion, estado, moverTarea, eliminarTarea 
                             {nombre}
                         </Card.Title>
 
-                        <Button
-                            variant="danger"
-                            className="py-0 px-2"
-                            size="sm"
-                            onClick={() => eliminarTarea(id)}>
-                            X
-                        </Button>
+                        <Dropdown align="end">
+                            <Dropdown.Toggle
+                            variant="link"
+                            className="text-dark p-0 text-decoration-none">
+                                ...
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu>
+                                <Dropdown.Item onClick={()=> {abrirModalEditar({id, nombre, descripcion, estado})}}>
+                                    Editar
+                                </Dropdown.Item>
+
+                                <Dropdown.Item onClick={() => {eliminarTarea(id)}} className="text-danger">
+                                    Eliminar
+                                </Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
                     </div>
 
                     <div className="d-flex align-items-center">
