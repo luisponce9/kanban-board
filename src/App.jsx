@@ -6,13 +6,20 @@ import FormularioTarea from './components/FormularioTarea';
 import Columna from './components/Columna'
 import { tareasIniciales } from './tareasIniciales'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 
 function App() {
-  const [listaTareas, setListaTareas] = useState(tareasIniciales)
+  const [listaTareas, setListaTareas] = useState(() => {
+    const listaGuardada = localStorage.getItem('tareas_kanban')
+    return listaGuardada ? JSON.parse(listaGuardada) : tareasIniciales
+  })
   const [mostrarModal, setMostrarModal] = useState(false)
   const [tareaAEditar, setTareaAEditar] = useState(null)
+
+  useEffect(() => {
+    localStorage.setItem('tareas_kanban', JSON.stringify(listaTareas))
+  }, [listaTareas])
 
   const agregarTarea = (nuevaTarea) => {
     setListaTareas([...listaTareas, { id: Date.now(), nombre: nuevaTarea.nombre, descripcion: nuevaTarea.descripcion, estado: "pendiente" }])
